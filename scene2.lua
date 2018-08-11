@@ -6,23 +6,8 @@
 
 local composer = require( "composer" )
 local scene = composer.newScene()
+-- the scene change functino when swipe to the left change to scene 1
 local function onSceneTouch( self, event )
-
-
-  -- if self.phase == "began" then
-
-
-
-    -- display.getCurrentStage():setFocus( self.target, self.id ) --Set focus on object using unique touch ID
-    -- self.target.numTouches = self.target.numTouches + 1
-    -- if self.target.numTouches >= 3 then
-      -- print( "This object is being multi-touched." )
-      -- composer.gotoScene( "scene1", "slideRight", 500 )
-      -- self.target.numTouches = self.target.numTouches - 3
-    -- end
-
-  -- elseif self.phase == "cancelled" or self.phase == "ended" then
-    -- display.getCurrentStage():setFocus( self.target, nil )
 
 	 local swipeLength = math.abs(self.x- self.xStart)
 	local phase = self.phase
@@ -52,17 +37,9 @@ local function onSceneTouch( self, event )
 -- end
 ---------------------------------------------------------------------------------
 
-local function showScene1()
-  local options = {
-    effect = "flip",
-    time = 500
-  }
-  composer.gotoScene("scene1", options)
-end
-
 function scene:create( event )
   local sceneGroup = self.view
-  
+  -- display a white base color for scene 2
   local background2 = display.newImage ("images/whiteBackground.png")
   background2.x = display.contentCenterX
   background2.y = display.contentCenterY
@@ -71,7 +48,7 @@ function scene:create( event )
   background2: addEventListener("touch", onSceneTouch)
   background2.alpha = 0.9
   sceneGroup: insert (background2)
-  
+  -- display the example scene
   local backgroundSet = display.newImage ("images/scene2Example.png")
   backgroundSet.x = display.contentCenterX
   backgroundSet.y = display.contentCenterY
@@ -80,10 +57,9 @@ function scene:create( event )
   backgroundSet: addEventListener("touch", onSceneTouch)
   backgroundSet.numTouches = 0
   sceneGroup: insert (backgroundSet)
-
   backgroundSet.touch = onSceneTouch
   
-  --------------------------------------
+
   
   
 end
@@ -98,11 +74,7 @@ function scene:show( event )
     --local textOfScene1 = display.newText("Hello world here is scene 2", )
 
   elseif phase == "did" then
-    --timer.performWithDelay(3000, showScene1)
-    -- Called when the scene is now on screen
-    --
-    -- INSERT code here to make the scene come alive
-    -- e.g. start timers, begin animation, play audio, etc.
+
   end
 end
 

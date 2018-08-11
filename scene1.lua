@@ -38,13 +38,32 @@ local maxLength = 42
 --activate multitouch
 --system.activate( "multitouch" )
 ---------------------------------------------------------------------------------
-
-
-
+-- the array of button data
+local numberButtonsArray = {
+    --{centerX, centerY + 20, 1},
+    {label = "1", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "2", action = 2, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "3", action = 3, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "4", action = 4, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "5", action = 5, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "6", action = 6, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "7", action = 7, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "8", action = 8, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "9", action = 9, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "0", action = 0, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "+/-", action = "sign", key = "sign", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    --{label = "-", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "backspace", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+}
+------------------------------------------------------------------------------
+--------------Function Area---------------
 local function buttonTouch (self,event)
-  print ("number button test has been preseed")
-  print (numberbutton)
+
   local action = self.actoin
+    local phase = self.phase
+    --print (phase)
+if  ("ended" == phase) then
+    print ("number button test has been preseed")
   if type(action) == "number" then
     print ("number action test passed")
 
@@ -56,6 +75,8 @@ local function buttonTouch (self,event)
 
 
   end
+end
+
 end
 
 local function onSceneTouch( self, event )
@@ -102,7 +123,18 @@ local function onSceneTouch( self, event )
     -- if self.target.numTouches <= 0 then
     -- display.getCurrentStage():setFocus( nil )
     -- end
-  end
+end
+
+local function buttonListener (event) --the main function that i use to set what will happend after i touch the button
+    local id = event.target.id
+    --print (numberButtonsArray[1].action)
+    if("ended" == event.phase) then
+        print ("actoin: " .. numberButtonsArray[1].action)
+        --print("inputValue")
+        --showScene2()
+    end
+
+end
 
 
 function scene:create( event )
@@ -119,6 +151,11 @@ function scene:create( event )
     backgroundSet.touch = onSceneTouch -- link backgroundSet to onSceneTouch function when the touch happened
     sceneGroup: insert (backgroundSet)-- insert backgroundSet into the secene group
 
+    --Creating display screen
+    local calcScreen = newScreen(50, 220)
+    --insert the calcScreen into the scenegroup
+    sceneGroup:insert(calcScreen)
+
     --create the progress bar
     local compareBar = widget.newProgressView(
         {
@@ -133,10 +170,22 @@ function scene:create( event )
     compareBar:setProgress( 0.5 )
     -- insert compareBar into sceneGroup
     sceneGroup: insert (compareBar)
-
-
-
-
+    -- set EnterButton
+    local EnterButton = display.newImage("images/EnterButton.png")
+    --x location
+    EnterButton.x = centerX + 50
+    --y location
+    EnterButton.y = centerY + 255
+    -- the button id
+    EnterButton.id = "EnterButton"
+    -- width of the button
+    EnterButton.width = 220
+    -- height of the button
+    EnterButton.height = 60
+    --link enterbutton with buttonlistener function
+    EnterButton: addEventListener("touch", buttonListener)
+    -- insert neterbutton into the scene group
+    sceneGroup: insert(EnterButton)
 end
 
 
@@ -145,60 +194,13 @@ function scene:show( event )
   local phase = event.phase
 
   if phase == "will" then
-
-
-    --Creating display screen
-    local calcScreen = newScreen(50, 220)
-    --insert the calcScreen into the scenegroup
-    sceneGroup:insert(calcScreen)
-
-    local numberButtonsArray = {
-      --{centerX, centerY + 20, 1},
-      {label = "1", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "2", action = 2, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "3", action = 3, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "4", action = 4, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "5", action = 5, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "6", action = 6, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "7", action = 7, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "8", action = 8, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "9", action = 9, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "0", action = 0, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "+/-", action = "sign", key = "sign", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      --{label = "-", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-      {label = "backspace", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-    }
-
-
-
-
-    local function buttonListener (event) --the main function that i use to set what will happend after i touch the button
-      local id = event.target.id
-     --print (numberButtonsArray[1].action)
-      if("ended" == event.phase) then
-        print ("actoin: " .. numberButtonsArray[1].action)
-        --print("inputValue")
-        --showScene2()
-      end
-
-    end
-
-
-    local EnterButton = display.newImage("images/EnterButton.png")
-    EnterButton.x = centerX + 50
-    EnterButton.y = centerY + 255
-    EnterButton.id = "EnterButton"
-    EnterButton.width = 220
-    EnterButton.height = 60
-    EnterButton: addEventListener("touch", buttonListener)
-    sceneGroup: insert(EnterButton)
-
+      -- set w = buttonWidth and h = buttonHeight
     local w, h = buttonWidth, buttonHeight
-
+    -- set data = numberButtonArray when useing it in a for loop will replace the index by i
     local data = numberButtonsArray[1]
-
+    -- when placing the button will use this
     local position  = 0
-
+    --create the test number button
     local testButton = newButton(data.label, w, h, data.backgroundColor, data.labelColor)
     testButton: addEventListener("touch", buttonTouch)
     sceneGroup: insert(testButton)
@@ -206,16 +208,6 @@ function scene:show( event )
     testButton.y = centerY+ 25
     testButton.action = data.action
 
-
-
-
-
-
-    --  display.setDefault( "background", 0.5 )
-    text1 = display.newText( "Scene 1", 2, 0, native.systemFontBold, 24 )
-    text1:setFillColor( 255 )
-    text1.x, text1.y = display.contentWidth * 0.5, 50
-    sceneGroup:insert( text1 )
   return testButton.action
 
     -- Called when the scene is still off screen and is about to move on screen
