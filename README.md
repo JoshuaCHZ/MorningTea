@@ -13,3 +13,6 @@ My DTS prototype
 >Create a Gist (https://gist.github.com/) for each configuration file related to this issue
 
 >Feedback : 
+
+
+## learning .lua , java and python 
