@@ -57,9 +57,11 @@ local numberButtonsArray = {
 }
 ------------------------------------------------------------------------------
 --------------Function Area---------------
+local calcScreen
 local function buttonTouch (self,event)
 
-  local action = self.actoin
+  local action = self.target.action
+    print (self.target.action)
     local phase = self.phase
     --print (phase)
 if  ("ended" == phase) then
@@ -70,7 +72,7 @@ if  ("ended" == phase) then
     if displayStr and displayStr: len () < maxLength then
       displayStr = displayStr .. action
       --display the number
-      calcScreen: setLable (displayStr)
+      calcScreen: setLabel (displayStr)
     end
 
 
@@ -152,7 +154,7 @@ function scene:create( event )
     sceneGroup: insert (backgroundSet)-- insert backgroundSet into the secene group
 
     --Creating display screen
-    local calcScreen = newScreen(50, 220)
+    calcScreen = newScreen(50, 220)
     --insert the calcScreen into the scenegroup
     sceneGroup:insert(calcScreen)
 
