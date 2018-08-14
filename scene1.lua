@@ -58,6 +58,27 @@ local numberButtonsArray = {
 ------------------------------------------------------------------------------
 --------------Function Area---------------
 local calcScreen
+
+
+local function categoryScroll (event)
+    local phase = event.phase
+    if (phase == "began") then print ("Scroll view was touched")
+    elseif (pahse == "moved") then print ("scroll view was moved")
+    elseif (phase == "ended") then print ("scroll view was released")
+    end
+
+    if (event.limitReached) then
+        if (event.direction == "up") then print ("reached bottom limit")
+        elseif (event.direction == "down") then print ("reached top limit")
+        elseif (event.direction == "left") then print ("reached right limit")
+        elseif (event.direction == "right") then print ("reached left limit ")
+        end
+
+    end
+
+end
+
+
 local function buttonTouch (self,event)
 
   local action = self.target.action
@@ -152,6 +173,24 @@ function scene:create( event )
     backgroundSet.alpha = 0.95  -- make the background 0.95 transperment
     backgroundSet.touch = onSceneTouch -- link backgroundSet to onSceneTouch function when the touch happened
     sceneGroup: insert (backgroundSet)-- insert backgroundSet into the secene group
+
+    -- create the widget
+    local categoryView = widget.newScrollView(
+        {
+            top = 215,
+            left = 0,
+            width = 100,
+            height =310,
+            horizontalScrollDisabled = true,
+            --scrollWidth = 0,
+            scrollHeight = 2550,
+            listener = categoryScroll
+        }
+    )
+    local testScroll = display.newImage("Swipe.png")
+    categoryView: insert (testScroll)
+    sceneGroup: insert (categoryView)
+
 
     --Creating display screen
     calcScreen = newScreen(50, 220)
