@@ -22,6 +22,10 @@ local newScreen = require("classes.screen").newScreen
 local calculator = require("classes.calculator")
 -- Store a local reference to the buttons. We need this to support key events
 local buttons = {}
+-- create category images
+local categoryIcon
+-- inconPostion for creating category ICon
+local iconPostion = 80
 
 --button locations
 local buttonWidth = display.actualContentWidth / 5
@@ -34,6 +38,8 @@ local isLastFunctional = true
 local displayStr = "0"
 -- How many symbols will fit on screen
 local maxLength = 42
+--variable for display screen
+local calcScreen
 
 --activate multitouch
 --system.activate( "multitouch" )
@@ -55,10 +61,29 @@ local numberButtonsArray = {
     --{label = "-", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
     {label = "backspace", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
 }
+
+local categoryArray = {
+    {fileLocation = "images/food.png"},
+    {fileLocation = "images/stationary.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+}
+
 ------------------------------------------------------------------------------
 --------------Function Area---------------
-local calcScreen
 
+local function categoryTouch (event)
+    local phase = event.phase
+    if (phase == "ended") then
+        print ("category test complete")
+    end
+
+end
 
 local function categoryScroll (event)
     local phase = event.phase
@@ -153,8 +178,7 @@ local function buttonListener (event) --the main function that i use to set what
     --print (numberButtonsArray[1].action)
     if("ended" == event.phase) then
         print ("actoin: " .. numberButtonsArray[1].action)
-        --print("inputValue")
-        --showScene2()
+
     end
 
 end
@@ -182,13 +206,12 @@ function scene:create( event )
             width = 100,
             height =310,
             horizontalScrollDisabled = true,
-            --scrollWidth = 0,
-            scrollHeight = 2550,
+            scrollHeight = 2000,
             listener = categoryScroll
         }
     )
-    local testScroll = display.newImage("Swipe.png")
-    categoryView: insert (testScroll)
+    local ScrollBackground = display.newImage("images/whiteBackground.png")
+    categoryView: insert (ScrollBackground)
     sceneGroup: insert (categoryView)
 
 
@@ -227,6 +250,16 @@ function scene:create( event )
     EnterButton: addEventListener("touch", buttonListener)
     -- insert neterbutton into the scene group
     sceneGroup: insert(EnterButton)
+
+    -- create all the category icon
+    for i = 1 , #categoryArray do
+        local cd = categoryArray[i]
+        categoryIcon = display.newImage(cd.fileLocation, 50, centerY+ (i*iconPostion))
+        categoryView: insert (categoryIcon)
+        categoryIcon: addEventListener("touch",categoryTouch )
+        --categoryView: setScrollHeight(i * iconPostion)
+    end
+
 end
 
 
