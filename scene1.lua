@@ -22,6 +22,10 @@ local newScreen = require("classes.screen").newScreen
 local calculator = require("classes.calculator")
 -- Store a local reference to the buttons. We need this to support key events
 local buttons = {}
+-- create category images
+local categoryIcon
+-- inconPostion for creating category ICon
+local iconPostion = 80
 
 --button locations
 local buttonWidth = display.actualContentWidth / 5
@@ -34,6 +38,8 @@ local isLastFunctional = true
 local displayStr = "0"
 -- How many symbols will fit on screen
 local maxLength = 42
+--variable for display screen
+local calcScreen
 
 --activate multitouch
 --system.activate( "multitouch" )
@@ -55,11 +61,53 @@ local numberButtonsArray = {
     --{label = "-", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
     {label = "backspace", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
 }
+
+local categoryArray = {
+    {fileLocation = "images/food.png"},
+    {fileLocation = "images/stationary.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/entertainment_Color.png"},
+}
+
 ------------------------------------------------------------------------------
 --------------Function Area---------------
+
+local function categoryTouch (event)
+    local phase = event.phase
+    if (phase == "ended") then
+        print ("category test complete")
+    end
+    return true
+end
+
+local function categoryScroll (event)
+    local phase = event.phase
+    if (phase == "began") then print ("Scroll view was touched")
+    elseif (pahse == "moved") then print ("scroll view was moved")
+    elseif (phase == "ended") then print ("scroll view was released")
+    end
+
+    if (event.limitReached) then
+        if (event.direction == "up") then print ("reached bottom limit")
+        elseif (event.direction == "down") then print ("reached top limit")
+        elseif (event.direction == "left") then print ("reached right limit")
+        elseif (event.direction == "right") then print ("reached left limit ")
+        end
+
+    end
+
+end
+
+
 local function buttonTouch (self,event)
 
-  local action = self.actoin
+  local action = self.target.action
+    print (self.target.action)
     local phase = self.phase
     --print (phase)
 if  ("ended" == phase) then
@@ -70,7 +118,7 @@ if  ("ended" == phase) then
     if displayStr and displayStr: len () < maxLength then
       displayStr = displayStr .. action
       --display the number
-      calcScreen: setLable (displayStr)
+      calcScreen: setLabel (displayStr)
     end
 
 
@@ -99,7 +147,7 @@ local function onSceneTouch( self, event )
         elseif self.xStart < self.x and swipeLength > 50 then
           print ("swiped right")
         end
-      
+
     end
 
     --print("backgroundSet has been pressed") --for testing
@@ -130,8 +178,7 @@ local function buttonListener (event) --the main function that i use to set what
     --print (numberButtonsArray[1].action)
     if("ended" == event.phase) then
         print ("actoin: " .. numberButtonsArray[1].action)
-        --print("inputValue")
-        --showScene2()
+
     end
 
 end
@@ -151,8 +198,55 @@ function scene:create( event )
     backgroundSet.touch = onSceneTouch -- link backgroundSet to onSceneTouch function when the touch happened
     sceneGroup: insert (backgroundSet)-- insert backgroundSet into the secene group
 
+    -- create the widget
+    local categoryView = widget.newScrollView(
+        {
+            top = 215,
+            left = 0,
+            width = 100,
+            height =310,
+            horizontalScrollDisabled = true,
+            --scrollHeight = 2000,
+            listener = categoryScroll
+        }
+    )
+    local ScrollBackground = display.newImage("images/whiteBackground.png")
+    categoryView: insert (ScrollBackground)
+    sceneGroup: insert (categoryView)
+     --create income area
+    local incomeView = widget.newScrollView(
+        {
+            top = 10,
+            left = 0,
+            width = centerX,
+            height = 205,
+            horizontalScrollDisabled = true,
+            scrollHeight = 2000,
+            listener = categoryScroll
+        }
+    )
+    local incomeBackground = display.newImage("images/whiteBackground.png")
+    incomeView: insert (incomeBackground)
+    sceneGroup: insert (incomeView)
+    -- create consumptino area
+    local consumptionView = widget.newScrollView(
+        {
+            top = 10,
+            left = centerX,
+            width = centerX,
+            height = 205,
+            horizontalScrollDisabled = true,
+            scrollHeight = 2000,
+            listener = categoryScroll
+        }
+    )
+    local incomeBackground = display.newImage("images/testImage.png")
+    consumptionView: insert (incomeBackground)
+    sceneGroup: insert (consumptionView)
+
+
     --Creating display screen
-    local calcScreen = newScreen(50, 220)
+    calcScreen = newScreen(50, 220)
     --insert the calcScreen into the scenegroup
     sceneGroup:insert(calcScreen)
 
@@ -160,7 +254,7 @@ function scene:create( event )
     local compareBar = widget.newProgressView(
         {
             left = 50,
-            top = 0,
+            top = -20,
             width = 220,
             isAnimated = true
         }
@@ -186,6 +280,16 @@ function scene:create( event )
     EnterButton: addEventListener("touch", buttonListener)
     -- insert neterbutton into the scene group
     sceneGroup: insert(EnterButton)
+
+    -- create all the category icon
+    for i = 1 , #categoryArray do
+        local cd = categoryArray[i]
+        categoryIcon = display.newImage(cd.fileLocation, 50, centerY+ ((i-1)*iconPostion)- 200)
+        categoryView: insert (categoryIcon)
+        categoryIcon: addEventListener("touch",categoryTouch )
+        categoryView: setScrollHeight(i * iconPostion)
+    end
+
 end
 
 
