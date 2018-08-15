@@ -82,7 +82,7 @@ local function categoryTouch (event)
     if (phase == "ended") then
         print ("category test complete")
     end
-
+    return true
 end
 
 local function categoryScroll (event)
@@ -147,7 +147,7 @@ local function onSceneTouch( self, event )
         elseif self.xStart < self.x and swipeLength > 50 then
           print ("swiped right")
         end
-      
+
     end
 
     --print("backgroundSet has been pressed") --for testing
@@ -206,13 +206,43 @@ function scene:create( event )
             width = 100,
             height =310,
             horizontalScrollDisabled = true,
-            scrollHeight = 2000,
+            --scrollHeight = 2000,
             listener = categoryScroll
         }
     )
     local ScrollBackground = display.newImage("images/whiteBackground.png")
     categoryView: insert (ScrollBackground)
     sceneGroup: insert (categoryView)
+     --create income area
+    local incomeView = widget.newScrollView(
+        {
+            top = 10,
+            left = 0,
+            width = centerX,
+            height = 205,
+            horizontalScrollDisabled = true,
+            scrollHeight = 2000,
+            listener = categoryScroll
+        }
+    )
+    local incomeBackground = display.newImage("images/whiteBackground.png")
+    incomeView: insert (incomeBackground)
+    sceneGroup: insert (incomeView)
+    -- create consumptino area
+    local consumptionView = widget.newScrollView(
+        {
+            top = 10,
+            left = centerX,
+            width = centerX,
+            height = 205,
+            horizontalScrollDisabled = true,
+            scrollHeight = 2000,
+            listener = categoryScroll
+        }
+    )
+    local incomeBackground = display.newImage("images/testImage.png")
+    consumptionView: insert (incomeBackground)
+    sceneGroup: insert (consumptionView)
 
 
     --Creating display screen
@@ -224,7 +254,7 @@ function scene:create( event )
     local compareBar = widget.newProgressView(
         {
             left = 50,
-            top = 0,
+            top = -20,
             width = 220,
             isAnimated = true
         }
@@ -254,10 +284,10 @@ function scene:create( event )
     -- create all the category icon
     for i = 1 , #categoryArray do
         local cd = categoryArray[i]
-        categoryIcon = display.newImage(cd.fileLocation, 50, centerY+ (i*iconPostion))
+        categoryIcon = display.newImage(cd.fileLocation, 50, centerY+ ((i-1)*iconPostion)- 200)
         categoryView: insert (categoryIcon)
         categoryIcon: addEventListener("touch",categoryTouch )
-        --categoryView: setScrollHeight(i * iconPostion)
+        categoryView: setScrollHeight(i * iconPostion)
     end
 
 end
