@@ -87,19 +87,13 @@ end
 
 local function categoryScroll (event)
     local phase = event.phase
-    if (phase == "began") then print ("Scroll view was touched")
-    elseif (pahse == "moved") then print ("scroll view was moved")
-    elseif (phase == "ended") then print ("scroll view was released")
-    end
+    --print ("test done")
 
     if (event.limitReached) then
-        if (event.direction == "up") then print ("reached bottom limit")
-        elseif (event.direction == "down") then print ("reached top limit")
-        elseif (event.direction == "left") then print ("reached right limit")
-        elseif (event.direction == "right") then print ("reached left limit ")
-        end
+
 
     end
+    return false
 
 end
 
@@ -107,13 +101,13 @@ end
 local function buttonTouch (self,event)
 
   local action = self.target.action
-    print (self.target.action)
+--    print (self.target.action)
     local phase = self.phase
     --print (phase)
 if  ("ended" == phase) then
-    print ("number button test has been preseed")
+--    print ("number button test has been preseed")
   if type(action) == "number" then
-    print ("number action test passed")
+--    print ("number action test passed")
 
     if displayStr and displayStr: len () < maxLength then
       displayStr = displayStr .. action
@@ -177,8 +171,27 @@ local function buttonListener (event) --the main function that i use to set what
     local id = event.target.id
     --print (numberButtonsArray[1].action)
     if("ended" == event.phase) then
-        print ("actoin: " .. numberButtonsArray[1].action)
 
+        if displayStr == "0" then
+                displayStr = ""
+        end
+        print (displayStr)
+        local action = event.target.action
+        -- set the current displaystr to calculator class
+        calculator.setOperand(displayStr)
+        print(calculator.setOperator(action), action)
+        -- Pass current math operator to the calculator class and see if there is a result available
+        if calculator.setOperator(action) then
+            -- Get the result from the calculator class
+            displayStr = calculator.getResult()
+            print("got result")
+            -- If there is an error (division by zero) - display "Error" on the screen
+            if calculator.error then
+                displayStr = "ERROR"
+            end
+        end
+        calcScreen:setLabel(displayStr)
+        calcScreen:blink()
     end
 
 end
@@ -186,6 +199,11 @@ end
 
 function scene:create( event )
     local sceneGroup = self.view
+
+    local topSwipe = display.newRect (centerX,centerY,fullw,fullh)
+    topSwipe: setFillColor (0.5)
+    topSwipe: addEventListener("touch", onSceneTouch)
+    --topSwipe.isVisible =false
 
     local backgroundSet = display.newImage ("images/whiteBackground.png")   --display new background use the local image
     backgroundSet.x = display.contentCenterX    --set x location
@@ -276,6 +294,8 @@ function scene:create( event )
     EnterButton.width = 220
     -- height of the button
     EnterButton.height = 60
+    -- set action for enter button
+    EnterButton.action = "result"
     --link enterbutton with buttonlistener function
     EnterButton: addEventListener("touch", buttonListener)
     -- insert neterbutton into the scene group
@@ -326,10 +346,7 @@ function scene:hide( event )
 
   if event.phase == "will" then
 
-    -- Called when the scene is on screen and is about to move off screen
-    --
-    -- INSERT code here to pause the scene
-    -- e.g. stop timers, stop animation, unload sounds, etc.)
+
   elseif phase == "did" then
 
     -- Called when the scene is now off screen
