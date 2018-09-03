@@ -28,7 +28,7 @@ local categoryIcon
 local iconPostion = 80
 
 --button locations
-local buttonWidth = display.actualContentWidth / 5
+local buttonWidth = 220/ 3
 local buttonHeight = math.floor(buttonWidth * 0.75)
 display.setStatusBar(display.TranslucentStatusBar)
 
@@ -201,9 +201,10 @@ function scene:create( event )
     local sceneGroup = self.view
 
     local topSwipe = display.newRect (centerX,centerY,fullw,fullh)
-    topSwipe: setFillColor (0.5)
+    --topSwipe: setFillColor (0.5)
     topSwipe: addEventListener("touch", onSceneTouch)
-    --topSwipe.isVisible =false
+    topSwipe.isVisible =false
+
 
     local backgroundSet = display.newImage ("images/whiteBackground.png")   --display new background use the local image
     backgroundSet.x = display.contentCenterX    --set x location
@@ -317,6 +318,15 @@ function scene:show( event )
   local sceneGroup = self.view
   local phase = event.phase
 
+    function number (numberValue,xValue,yValue)
+        local numbers = newButton (numberButtonsArray[numberValue].label, w, h,numberButtonsArray[numberValue],backgroundColor, numberButtonsArray[numberValue].labelColor)
+        numbers.x = xValue
+        numbers.y = yValue
+        numbers.action = numberValue
+        numbers:addEventListener("touch", buttonTouch)
+        sceneGroup: insert(numbers)
+    end
+
   if phase == "will" then
       -- set w = buttonWidth and h = buttonHeight
     local w, h = buttonWidth, buttonHeight
@@ -328,9 +338,28 @@ function scene:show( event )
     local testButton = newButton(data.label, w, h, data.backgroundColor, data.labelColor)
     testButton: addEventListener("touch", buttonTouch)
     sceneGroup: insert(testButton)
-    testButton.x = centerX- 25
+    testButton.x = 100+(buttonWidth/2)
     testButton.y = centerY+ 25
     testButton.action = data.action
+
+    local number2 = newButton(numberButtonsArray[2].label, w,h,numberButtonsArray[2].backgroundColor,numberButtonsArray[2].labelColor)
+    sceneGroup: insert (number2)
+    number2: addEventListener("touch", buttonTouch)
+    number2.x = 100+ 1.5*buttonWidth
+    number2.y = centerY + 25
+    number2.action = 2
+
+    local number3 = newButton (numberButtonsArray[3].label,w,h,numberButtonsArray[3].backgroundColor,numberButtonsArray[3].labelColor)
+    number3: addEventListener("touch", buttonTouch)
+    sceneGroup: insert(number3)
+    number3.x = 100+ 2.5*buttonWidth
+    number3.y = centerY+ 25
+    number3.action = 3
+
+    -- number (4,100+(buttonWidth/2),centerY+50)
+
+
+
 
   return testButton.action
 

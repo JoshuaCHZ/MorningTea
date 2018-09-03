@@ -7,6 +7,9 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 -- the scene change functino when swipe to the left change to scene 1
+
+
+
 local function onSceneTouch( self, event )
 
 	 local swipeLength = math.abs(self.x- self.xStart)
