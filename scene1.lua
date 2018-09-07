@@ -29,7 +29,7 @@ local iconPostion = 80
 
 --button locations
 local buttonWidth = 220/ 3
-local buttonHeight = math.floor(buttonWidth * 0.75)
+local buttonHeight = 200/4--math.floor(buttonWidth * 0.75)
 display.setStatusBar(display.TranslucentStatusBar)
 
 -- Functional button pressed flag
@@ -58,12 +58,13 @@ local numberButtonsArray = {
     {label = "9", action = 9, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
     {label = "0", action = 0, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
     {label = "+/-", action = "sign", key = "sign", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "+", action = "add", key = "+", backgroundColor = colors.primaryBackground, labelColor = colors.primaryLabel},
     --{label = "-", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
     {label = "backspace", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
 }
 
 local categoryArray = {
-    {fileLocation = "images/food.png"},
+    --{fileLocation = "images/food.png"},
     {fileLocation = "images/stationary.png"},
     {fileLocation = "images/entertainment_Color.png"},
     {fileLocation = "images/entertainment_Color.png"},
@@ -127,9 +128,13 @@ local function onSceneTouch( self, event )
 	local phase = self.phase
     --print (phase, swipeLength)
     local t = self.target
-   
+
+
+
 
     if "began" == phase then
+
+
         return true
       elseif "moved" == phase then
         --print("move finish")
@@ -141,7 +146,7 @@ local function onSceneTouch( self, event )
         elseif self.xStart < self.x and swipeLength > 50 then
           print ("swiped right")
         end
-
+        return true
     end
 
     --print("backgroundSet has been pressed") --for testing
@@ -318,14 +323,7 @@ function scene:show( event )
   local sceneGroup = self.view
   local phase = event.phase
 
-    function number (numberValue,xValue,yValue)
-        local numbers = newButton (numberButtonsArray[numberValue].label, w, h,numberButtonsArray[numberValue],backgroundColor, numberButtonsArray[numberValue].labelColor)
-        numbers.x = xValue
-        numbers.y = yValue
-        numbers.action = numberValue
-        numbers:addEventListener("touch", buttonTouch)
-        sceneGroup: insert(numbers)
-    end
+
 
   if phase == "will" then
       -- set w = buttonWidth and h = buttonHeight
@@ -334,6 +332,16 @@ function scene:show( event )
     local data = numberButtonsArray[1]
     -- when placing the button will use this
     local position  = 0
+        -- number function
+      function number (numberValue,xValue,yValue)
+          local numbers = newButton (numberButtonsArray[numberValue].label, w, h,numberButtonsArray[numberValue],backgroundColor, numberButtonsArray[numberValue].labelColor)
+          numbers.x = xValue
+          numbers.y = yValue
+          numbers.action = numberValue
+          numbers:addEventListener("touch", buttonTouch)
+          sceneGroup: insert(numbers)
+      end
+
     --create the test number button
     local testButton = newButton(data.label, w, h, data.backgroundColor, data.labelColor)
     testButton: addEventListener("touch", buttonTouch)
@@ -356,12 +364,60 @@ function scene:show( event )
     number3.y = centerY+ 25
     number3.action = 3
 
-    -- number (4,100+(buttonWidth/2),centerY+50)
+    --number (4,100+(buttonWidth/2),centerY+85)
+
+      local number4 = newButton (numberButtonsArray[4].label,w,h,numberButtonsArray[4].backgroundColor,numberButtonsArray[4].labelColor)
+      number4: addEventListener("touch",buttonTouch)
+      sceneGroup: insert(number4)
+      number4.x = 100+buttonWidth/2
+        number4.y = centerY+25+buttonHeight
+      number4.action = 4
 
 
+    local number5 = newButton (numberButtonsArray[5].label,w,h,numberButtonsArray[5].backgroundColor,numberButtonsArray[5].labelColor)
+    number5: addEventListener("touch",buttonTouch)
+    sceneGroup: insert(number5)
+    number5.x = 100+1.5*buttonWidth
+    number5.y = centerY+ 25+buttonHeight
+    number5.action = 5
 
-
-  return testButton.action
+      local number6 = newButton (numberButtonsArray[6].label,w,h,numberButtonsArray[6].backgroundColor,numberButtonsArray[6].labelColor)
+      number6: addEventListener("touch",buttonTouch)
+      sceneGroup: insert(number6)
+      number6.x = 100+2.5*buttonWidth
+      number6.y = centerY+ 25+buttonHeight
+      number6.action = 6
+      local number7 = newButton (numberButtonsArray[7].label,w,h,numberButtonsArray[7].backgroundColor,numberButtonsArray[7].labelColor)
+      number7: addEventListener("touch",buttonTouch)
+      sceneGroup: insert(number7)
+      number7.x = 100+buttonWidth/2
+      number7.y = centerY+ 25+buttonHeight*2
+      number7.action = 7
+      local number8 = newButton (numberButtonsArray[8].label,w,h,numberButtonsArray[8].backgroundColor,numberButtonsArray[8].labelColor)
+      number8: addEventListener("touch",buttonTouch)
+      sceneGroup: insert(number8)
+      number8.x = 100+1.5*buttonWidth
+      number8.y = centerY+ 25+buttonHeight*2
+      number8.action = 8
+      local number9 = newButton (numberButtonsArray[9].label,w,h,numberButtonsArray[9].backgroundColor,numberButtonsArray[9].labelColor)
+      number9: addEventListener("touch",buttonTouch)
+      sceneGroup: insert(number9)
+      number9.x = 100+1.5*buttonWidth
+      number9.y = centerY+ 25+buttonHeight*2
+      number9.action = 9
+      local number0 = newButton (numberButtonsArray[10].label,w,h,numberButtonsArray[10].backgroundColor,numberButtonsArray[10].labelColor)
+      number0: addEventListener("touch",buttonTouch)
+      sceneGroup: insert(number0)
+      number0.x = 100+2.5*buttonWidth
+      number0.y = centerY+ 25+buttonHeight*2
+      number0.action = 0
+  local PlusButton = newButton(numberButtonsArray[12].label,w/2,h,numberButtonsArray[12].backgroundColor,numberButtonsArray[12].labelColor)
+    PlusButton: addEventListener("touch",buttonTouch)
+    sceneGroup: insert(PlusButton)
+    PlusButton.x = 100+w/4
+    PlusButton.y = centerY+25+buttonHeight*3
+    PlusButton.action = "+"
+  --return testButton.action
 
     -- Called when the scene is still off screen and is about to move on screen
   elseif phase == "did" then
