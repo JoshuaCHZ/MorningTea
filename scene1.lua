@@ -100,9 +100,10 @@ end
 
 
 local function buttonTouch (self,event)
-
+print("hghjfhfg")
   local action = self.target.action
 --    print (self.target.action)
+print(action)
     local phase = self.phase
     --print (phase)
 if  ("ended" == phase) then
@@ -110,13 +111,25 @@ if  ("ended" == phase) then
   if type(action) == "number" then
 --    print ("number action test passed")
 
+
     if displayStr and displayStr: len () < maxLength then
-      displayStr = displayStr .. action
+
+        if displayStr == 0 then
+            displayStr = action
+        else
+            displayStr = displayStr .. action
+        end
+
+
       --display the number
       calcScreen: setLabel (displayStr)
     end
-
-
+  else
+      if displayStr and displayStr: len () < maxLength then
+          displayStr = displayStr .. action
+          --display the number
+          calcScreen: setLabel (displayStr)
+      end
   end
 end
 
@@ -130,11 +143,7 @@ local function onSceneTouch( self, event )
     local t = self.target
 
 
-
-
     if "began" == phase then
-
-
         return true
       elseif "moved" == phase then
         --print("move finish")
@@ -145,8 +154,10 @@ local function onSceneTouch( self, event )
 		  composer.gotoScene( "scene2", "slideLeft", 500 )
         elseif self.xStart < self.x and swipeLength > 50 then
           print ("swiped right")
+        else
+            return false
         end
-        return true
+
     end
 
     --print("backgroundSet has been pressed") --for testing
@@ -209,6 +220,7 @@ function scene:create( event )
     --topSwipe: setFillColor (0.5)
     topSwipe: addEventListener("touch", onSceneTouch)
     topSwipe.isVisible =false
+    topSwipe.isHitTestable = true
 
 
     local backgroundSet = display.newImage ("images/whiteBackground.png")   --display new background use the local image
@@ -216,7 +228,7 @@ function scene:create( event )
     backgroundSet.y = display.contentCenterY    --set y location
     backgroundSet.width = 480   -- set width
     backgroundSet.height = 854 -- set height
-    backgroundSet: addEventListener("touch", onSceneTouch)
+   -- backgroundSet: addEventListener("touch", onSceneTouch)
     backgroundSet.isHitTestable = true  -- i don't understand
     backgroundSet.alpha = 0.95  -- make the background 0.95 transperment
     backgroundSet.touch = onSceneTouch -- link backgroundSet to onSceneTouch function when the touch happened
