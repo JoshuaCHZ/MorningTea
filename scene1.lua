@@ -41,6 +41,7 @@ local maxLength = 42
 --variable for display screen
 local calcScreen
 
+
 --activate multitouch
 --system.activate( "multitouch" )
 ---------------------------------------------------------------------------------
@@ -132,6 +133,9 @@ if  ("ended" == phase) then
       calcScreen: setLabel (displayStr)
   else
       if displayStr and displayStr: len () < maxLength then
+          if displayStr == "0" then
+              displayStr = ""
+          end
           displayStr = displayStr .. action
           --display the number
           calcScreen: setLabel (displayStr)
@@ -216,8 +220,14 @@ local function buttonListener (event) --the main function that i use to set what
 --                displayStr = "ERROR"
 --            end
 --        end
+
         calcScreen:setLabel(displayStr)
         calcScreen:blink()
+
+        local testResult = 0
+
+
+
     end
 
 end
@@ -257,9 +267,9 @@ function scene:create( event )
             listener = categoryScroll
         }
     )
-    local ScrollBackground = display.newImage("images/whiteBackground.png")
-    categoryView: insert (ScrollBackground)
-    sceneGroup: insert (categoryView)
+--    local ScrollBackground = display.newImage("images/whiteBackground.png")
+--    categoryView: insert (ScrollBackground)
+     sceneGroup: insert (categoryView)
      --create income area
     local incomeView = widget.newScrollView(
         {
