@@ -59,8 +59,8 @@ local numberButtonsArray = {
     {label = "0", action = 0, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
     {label = "+/-", action = "sign", key = "sign", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
     {label = "+", action = "add", key = "+", backgroundColor = colors.primaryBackground, labelColor = colors.primaryLabel},
-    --{label = "-", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
-    {label = "backspace", action = 1, key = "1", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
+    {label = "–", action = "subtract", key = "-", backgroundColor = colors.primaryBackground, labelColor = colors.primaryLabel},
+    {label = "AC", action = "reset", key = "c", backgroundColor = colors.secondaryBackground, labelColor = colors.secondaryLabel},
 }
 
 local categoryArray = {
@@ -100,10 +100,9 @@ end
 
 
 local function buttonTouch (self,event)
-print("hghjfhfg")
   local action = self.target.action
 --    print (self.target.action)
-print(action)
+--print(action)
     local phase = self.phase
     --print (phase)
 if  ("ended" == phase) then
@@ -111,19 +110,26 @@ if  ("ended" == phase) then
   if type(action) == "number" then
 --    print ("number action test passed")
 
-
+    print("befor < test" .. displayStr)
     if displayStr and displayStr: len () < maxLength then
 
-        if displayStr == 0 then
-            displayStr = action
-        else
-            displayStr = displayStr .. action
+--        if tonumber(displayStr) == 0 then
+--            print("passtest")
+--            displayStr = action
+--        else
+--            displayStr = displayStr .. action
+--        end
+        if displayStr == "0" then
+        displayStr = ""
         end
-
+        displayStr = displayStr .. action
 
       --display the number
       calcScreen: setLabel (displayStr)
     end
+  elseif ("clear" == action) then
+      displayStr = "0"
+      calcScreen: setLabel (displayStr)
   else
       if displayStr and displayStr: len () < maxLength then
           displayStr = displayStr .. action
@@ -192,20 +198,24 @@ local function buttonListener (event) --the main function that i use to set what
                 displayStr = ""
         end
         print (displayStr)
-        local action = event.target.action
-        -- set the current displaystr to calculator class
-        calculator.setOperand(displayStr)
-        print(calculator.setOperator(action), action)
-        -- Pass current math operator to the calculator class and see if there is a result available
-        if calculator.setOperator(action) then
-            -- Get the result from the calculator class
-            displayStr = calculator.getResult()
-            print("got result")
-            -- If there is an error (division by zero) - display "Error" on the screen
-            if calculator.error then
-                displayStr = "ERROR"
-            end
-        end
+
+        local resultValue = tonumber (displayStr)
+        print(resultValue)
+
+--        local action = event.target.action
+--        -- set the current displaystr to calculator class
+--        calculator.setOperand(displayStr)
+--        print(calculator.setOperator(action), action)
+--        -- Pass current math operator to the calculator class and see if there is a result available
+--        if calculator.setOperator(action) then
+--            -- Get the result from the calculator class
+--            displayStr = calculator.getResult()
+--            print("got result")
+--            -- If there is an error (division by zero) - display "Error" on the screen
+--            if calculator.error then
+--                displayStr = "ERROR"
+--            end
+--        end
         calcScreen:setLabel(displayStr)
         calcScreen:blink()
     end
@@ -221,6 +231,7 @@ function scene:create( event )
     topSwipe: addEventListener("touch", onSceneTouch)
     topSwipe.isVisible =false
     topSwipe.isHitTestable = true
+    sceneGroup: insert(topSwipe)
 
 
     local backgroundSet = display.newImage ("images/whiteBackground.png")   --display new background use the local image
@@ -231,7 +242,7 @@ function scene:create( event )
    -- backgroundSet: addEventListener("touch", onSceneTouch)
     backgroundSet.isHitTestable = true  -- i don't understand
     backgroundSet.alpha = 0.95  -- make the background 0.95 transperment
-    backgroundSet.touch = onSceneTouch -- link backgroundSet to onSceneTouch function when the touch happened
+    --ackgroundSet.touch = onSceneTouch -- link backgroundSet to onSceneTouch function when the touch happened
     sceneGroup: insert (backgroundSet)-- insert backgroundSet into the secene group
 
     -- create the widget
@@ -414,14 +425,14 @@ function scene:show( event )
       local number9 = newButton (numberButtonsArray[9].label,w,h,numberButtonsArray[9].backgroundColor,numberButtonsArray[9].labelColor)
       number9: addEventListener("touch",buttonTouch)
       sceneGroup: insert(number9)
-      number9.x = 100+1.5*buttonWidth
+      number9.x = 100+2.5*buttonWidth
       number9.y = centerY+ 25+buttonHeight*2
       number9.action = 9
       local number0 = newButton (numberButtonsArray[10].label,w,h,numberButtonsArray[10].backgroundColor,numberButtonsArray[10].labelColor)
       number0: addEventListener("touch",buttonTouch)
       sceneGroup: insert(number0)
-      number0.x = 100+2.5*buttonWidth
-      number0.y = centerY+ 25+buttonHeight*2
+      number0.x = 100+1.5*buttonWidth
+      number0.y = centerY+25+buttonHeight*3
       number0.action = 0
   local PlusButton = newButton(numberButtonsArray[12].label,w/2,h,numberButtonsArray[12].backgroundColor,numberButtonsArray[12].labelColor)
     PlusButton: addEventListener("touch",buttonTouch)
@@ -429,6 +440,19 @@ function scene:show( event )
     PlusButton.x = 100+w/4
     PlusButton.y = centerY+25+buttonHeight*3
     PlusButton.action = "+"
+  local clear = newButton(numberButtonsArray[14].label,w,h,numberButtonsArray[14].backgroundColor,numberButtonsArray[14].labelColor)
+    clear.x = 100+2.5*buttonWidth
+    clear.y = centerY+25+buttonHeight*3
+    clear.action = "clear"
+    clear: addEventListener("touch",buttonTouch)
+    sceneGroup: insert(clear)
+  local minus = newButton(numberButtonsArray[13].label,w/2,h,numberButtonsArray[13].backgroundColor,numberButtonsArray[13].labelColor)
+    minus.x = 100+w/1.35
+    minus.y = centerY+25+buttonHeight*3
+    minus.action = "-"
+    minus: addEventListener("touch",buttonTouch)
+    sceneGroup: insert(minus)
+
   --return testButton.action
 
     -- Called when the scene is still off screen and is about to move on screen

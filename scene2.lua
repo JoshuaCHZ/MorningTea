@@ -8,7 +8,14 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 -- the scene change functino when swipe to the left change to scene 1
 
-
+--set fullh = the conten Height
+local fullh = display.contentHeight
+-- set fullw = the content Width
+local fullw = display.contentWidth
+-- set centerX
+local centerX = display.contentCenterX
+-- set centerY
+local centerY = display.contentCenterY
 
 local function onSceneTouch( self, event )
 
@@ -61,6 +68,13 @@ function scene:create( event )
   backgroundSet.numTouches = 0
   sceneGroup: insert (backgroundSet)
   backgroundSet.touch = onSceneTouch
+
+  local topSwipe = display.newRect (centerX,centerY,fullw,fullh)
+  --topSwipe: setFillColor (0.5)
+  topSwipe: addEventListener("touch", onSceneTouch)
+  topSwipe.isVisible =false
+  topSwipe.isHitTestable = true
+  sceneGroup: insert(topSwipe)
   
 
   
