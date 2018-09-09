@@ -1,3 +1,5 @@
+require "sqlite3"
+
 --require the widget library
 local widget = require ("widget")
 --set the maxLength of the display area to 42 chr
@@ -41,9 +43,12 @@ local maxLength = 42
 --variable for display screen
 local calcScreen
 
+local date = os.date( "*t" )    -- Returns table of date & time values
 
+local t = os.date( "%c" )
 --activate multitouch
 --system.activate( "multitouch" )
+
 ---------------------------------------------------------------------------------
 -- the array of button data
 local numberButtonsArray = {
@@ -61,35 +66,53 @@ local numberButtonsArray = {
     {label = "+/-", action = "sign", key = "sign", backgroundColor = colors.numpadBackground, labelColor = colors.numpadLabel},
     {label = "+", action = "add", key = "+", backgroundColor = colors.primaryBackground, labelColor = colors.primaryLabel},
     {label = "–", action = "subtract", key = "-", backgroundColor = colors.primaryBackground, labelColor = colors.primaryLabel},
-    {label = "AC", action = "reset", key = "c", backgroundColor = colors.secondaryBackground, labelColor = colors.secondaryLabel},
+    {label = "C", action = "reset", key = "c", backgroundColor = colors.secondaryBackground, labelColor = colors.secondaryLabel},
 }
 
 local categoryArray = {
     --{fileLocation = "images/food.png"},
-    {fileLocation = "images/stationary.png"},
-    {fileLocation = "images/entertainment_Color.png"},
-    {fileLocation = "images/entertainment_Color.png"},
-    {fileLocation = "images/entertainment_Color.png"},
-    {fileLocation = "images/entertainment_Color.png"},
-    {fileLocation = "images/entertainment_Color.png"},
-    {fileLocation = "images/entertainment_Color.png"},
-    {fileLocation = "images/entertainment_Color.png"},
+    {fileLocation = "images/stationary.png",id = "stationary"},
+    {fileLocation = "images/entertainment_Color.png",id = "entertainment"},
+    {fileLocation = "images/bus.png",id = "transport"},
+    {fileLocation = "images/diet.png", id = "diet"},
+    {fileLocation = "images/pills.png",id = "pills"},
+--    {fileLocation = "images/entertainment_Color.png"},
+--    {fileLocation = "images/entertainment_Color.png"},
+--    {fileLocation = "images/entertainment_Color.png"},
 }
+local dataPath = system.pathForFile ("db",system.DocumentsDirectory)
+db = sqlite3.open (dataPath)
 
+local createRecord = [[CREATE TABLE IF NOT EXISTS profiles
+                        (id INTEGER PRIMARY KEY autoincrement , value,category,time);]]
+db: exec(createRecord)
+
+--local counterPath = system.pathForFile ("counter",system.DocumentsDirectory)
+--counter = sqlite3.open(counterPath)
+--
+--local counterSetup = [[CREATE TABLE IF NOT EXISTS counterValue(number,value )]]
+--
+--counter: exec (counterSetup)
 ------------------------------------------------------------------------------
 --------------Function Area---------------
 
+local categoryIndex = "defult"
+
 local function categoryTouch (event)
     local phase = event.phase
+
     if (phase == "ended") then
-        print ("category test complete")
+        categoryIndex = event.target.id
+        --print ("category test complete")
+        print (event.target.id)
+
     end
-    return true
+    return categoryIndex
 end
 
 local function categoryScroll (event)
     local phase = event.phase
-    --print ("test done")
+    --print (categoryPhase)
 
     if (event.limitReached) then
 
@@ -111,7 +134,7 @@ if  ("ended" == phase) then
   if type(action) == "number" then
 --    print ("number action test passed")
 
-    print("befor < test" .. displayStr)
+    --print("befor < test" .. displayStr)
     if displayStr and displayStr: len () < maxLength then
 
 --        if tonumber(displayStr) == 0 then
@@ -196,15 +219,14 @@ end
 local function buttonListener (event) --the main function that i use to set what will happend after i touch the button
     local id = event.target.id
     --print (numberButtonsArray[1].action)
+--    local t = os.date( '*t' )
+--    print(t)
     if("ended" == event.phase) then
 
-        if displayStr == "0" then
-                displayStr = ""
-        end
-        print (displayStr)
+--        if displayStr == "0" then
+--                displayStr = "0"
+--        end
 
-        local resultValue = tonumber (displayStr)
-        print(resultValue)
 
 --        local action = event.target.action
 --        -- set the current displaystr to calculator class
@@ -220,12 +242,23 @@ local function buttonListener (event) --the main function that i use to set what
 --                displayStr = "ERROR"
 --            end
 --        end
+        print("tostringdisplay".." "..tostring(displayStr))
 
+
+        --insert data to db
+        local insertData = [[INSERT INTO profiles VALUES(NULL,']] .. displayStr ..[[',']].. categoryIndex..[[',']]..t.. [[');]]
+        db: exec(insertData)
+        --print (insertData)
+
+        --counter = counter +1
+        --print(displayStr)
         calcScreen:setLabel(displayStr)
         calcScreen:blink()
 
         local testResult = 0
 
+--        local doCount = [[INSERT INTO counterValue(null,'5'); ]]
+--        counter:exec(doCount)
 
 
     end
@@ -344,9 +377,11 @@ function scene:create( event )
     for i = 1 , #categoryArray do
         local cd = categoryArray[i]
         categoryIcon = display.newImage(cd.fileLocation, 50, centerY+ ((i-1)*iconPostion)- 200)
+        categoryIcon.id = cd.id
         categoryView: insert (categoryIcon)
         categoryIcon: addEventListener("touch",categoryTouch )
         categoryView: setScrollHeight(i * iconPostion)
+
     end
 
 end
